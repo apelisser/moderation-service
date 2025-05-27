@@ -1,5 +1,6 @@
 package com.apelisser.algacomments.moderationservice.domain.service;
 
+import com.apelisser.algacomments.moderationservice.domain.repository.DisallowedWordRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -10,10 +11,16 @@ import java.util.stream.Collectors;
 @Service
 public class ModerationService {
 
-    private static final Set<String> DISALLOWED_WORDS = Set.of("ódio", "xingamento");
+    private final DisallowedWordRepository disallowedWordRepository;
+
+    public ModerationService(DisallowedWordRepository disallowedWordRepository) {
+        this.disallowedWordRepository = disallowedWordRepository;
+    }
 
     public Set<String> extractDisallowedWords(String text) {
-        return DISALLOWED_WORDS.stream()
+        Set<String> disallowedWords = disallowedWordRepository.getAllDisallowedWords();
+
+        return disallowedWords.stream()
             .filter(text::contains)
             .collect(Collectors.toSet());
     }
